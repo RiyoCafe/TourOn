@@ -1,0 +1,17 @@
+.a:hover
+{
+    color:#EBDEF0 ;
+}
+.outerdiv
+{
+    width:100%; margin-left:50%; margin-right:50%
+}
+
+.innerdiv
+{
+    height:40px;
+    width: 100px;
+    margin: 2px;
+    box-sizing: border-box;
+
+}
