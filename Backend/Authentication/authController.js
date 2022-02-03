@@ -36,7 +36,8 @@ class AuthController {
               //will be directed to looged in page
             });*/
             res.send({
-                status:"success"
+                status:"success",
+                username:result.username
             })
         } else {
             switch (result.error) {

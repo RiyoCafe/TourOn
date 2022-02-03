@@ -44,6 +44,7 @@ class AuthRepository extends Repository {
         const query = "select * from customer where mail = :0 and password= :1";
         const params = [data.mail, data.password];
         const result = await this.sqlQuery(query, params);
+
         console.log(result, "in sign in in auth repository");
         if (result.data.length == 0) {
             return {
@@ -54,6 +55,8 @@ class AuthRepository extends Repository {
         else
             return {
                 success: true,
+                username:result.data[0]['NAME']
+
             };
     };
 }

@@ -22,7 +22,20 @@ import image2 from "../images_cards/hotelcard-2.jpg"
 import image3 from "../images_cards/hotelcard-3.jpg"
 import image4 from "../images_cards/hotelcard-4.jpg"
 import image5 from "../images_cards/hotelcard-5.jpg"
-import {Button, Grid, Rating} from "@mui/material";
+import {Button, Grid, Rating, TextField} from "@mui/material";
+import { useState } from "react";
+import { Select, MenuItem } from "@material-ui/core";
+import countries from "i18n-iso-countries";
+// Import the languages you want to use
+import enLocale from "i18n-iso-countries/langs/en.json";
+import itLocale from "i18n-iso-countries/langs/it.json";
+
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
+import {SearchOutlined} from "@mui/icons-material";
+import {nav} from "../App";
+
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -36,31 +49,99 @@ const ExpandMore = styled((props) => {
 }));
 
 const Home= () =>{
+
     const [expanded, setExpanded] = React.useState(false);
+    const [date,setDate]=useState(new Date());
+    const handleFactoryDateChange = (newValue) => {
+
+        setDate(newValue);
+    };
+
+
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+    const [selectedCountry, setSelectedCountry] = useState("");
+
+    const selectCountryHandler = (value) => setSelectedCountry(value);
+
+    // Have to register the languages you want to use
+    countries.registerLocale(enLocale);
+    countries.registerLocale(itLocale);
+
+    // Returns an object not a list
+    const countryObj = countries.getNames("en", { select: "official" });
+
+    const countryArr = Object.entries(countryObj).map(([key, value]) => {
+        return {
+            label: value,
+            value: key
+        };
+    });
+
+    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+    const handleDateChange=(date)=>
+    {
+        setSelectedDate(date);
+
+    };
+    const [date2,setDate2]=useState(new Date());
+    const handleFactoryDateChange2 = (newValue2) => {
+
+        setDate2(newValue2);
+    };
+    const buttonclick=()=>
+    {
+        nav('/afterSearchFromHome')
+    }
+
     return(
         <div>
             <Navbar/>
-            {/*<div  >*/}
-            {/*    <MDBCard style={{ maxWidth: '22rem' ,align:"center"}}>*/}
-            {/*        <MDBRipple rippleColor='light' rippleTag='div' className='bg-image hover-overlay'>*/}
-            {/*            <MDBCardImage src='https://mdbootstrap.com/img/new/standard/nature/111.webp' fluid alt='...' />*/}
-            {/*            <a>*/}
-            {/*                <div className='mask' style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}></div>*/}
-            {/*            </a>*/}
-            {/*        </MDBRipple>*/}
-            {/*        <MDBCardBody>*/}
-            {/*            <MDBCardTitle>Card title</MDBCardTitle>*/}
-            {/*            <MDBCardText>*/}
-            {/*                Some quick example text to build on the card title and make up the bulk of the card's content.*/}
-            {/*            </MDBCardText>*/}
-            {/*            <MDBBtn href='#'>Button</MDBBtn>*/}
-            {/*        </MDBCardBody>*/}
-            {/*    </MDBCard>*/}
-            {/*</div>*/}
+
+            <div style={{display:"flex",
+                flexDirection:"row"}} >
+                <Select
+                    style={{ width: "150px",marginLeft:"200px",background:"transparent",border:"black"}}
+                    value={selectedCountry}
+                    onChange={(e) => selectCountryHandler(e.target.value)}
+                >
+                    {!!countryArr?.length &&
+                        countryArr.map(({ label, value }) => (
+                            <MenuItem key={value} value={value}>
+                                {label}
+                            </MenuItem>
+                        ))}
+                </Select>
+
+
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DesktopDatePicker
+                        value={date}
+                        onChange={handleFactoryDateChange}
+                        label="Arrival date"
+                        inputFormat="MM/dd/yyyy"
+
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DesktopDatePicker
+                        value={date2}
+                        onChange={handleFactoryDateChange2}
+                        label="Checkout Date"
+                        inputFormat="MM/dd/yyyy"
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </LocalizationProvider>
+                <Button variant="contained" style={{background:"transparent",color:"black"}} onClick={buttonclick}>Search
+                    </Button>
+
+
+
+            </div>
+
 
             <div>
                 <Carousel style={{height:"600px"}}>

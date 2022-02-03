@@ -1,6 +1,9 @@
 .a:hover
 {
     color:#EBDEF0 ;
+    trasform:scale(1.02);
+    transition-duration: 0.2s;
+    transform: translateY(-1rem);
 }
 .outerdiv
 {

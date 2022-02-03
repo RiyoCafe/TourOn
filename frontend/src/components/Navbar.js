@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import { NavLink } from 'react-router-dom'
 import { navigate } from '../App'
@@ -7,8 +7,16 @@ import logo from '../images/logoproject.jpg'
 
 var nav
 
-const Navbar= () =>{
+const Navbar= (props) =>{
     nav=useNavigate();
+
+    // const[username,setUsername]=useState(props.username);
+    // useEffect(()=>
+    // {
+    //     setUsername(props.username)
+    //     console.log(props.username)
+    // },[props.username])
+
     return(
         <>
             <nav  class="navbar navbar-expand-lg navbar-light bg-light">
@@ -39,12 +47,13 @@ const Navbar= () =>{
       <li style={{cursor:'pointer',marginLeft:"40px",fontFamily:'monospace'}} class="nav-item" onClick={()=>{
           nav("/login")
       }} >
-       Login
+          LogIn
       </li>
       <li style={{cursor:'pointer',marginLeft:"40px",fontFamily:'monospace'}} class="nav-item" onClick={()=>{
           nav("/signup")
       }} >
-       Signup
+          SignUp
+
       </li>
       <li style={{cursor:'pointer',marginLeft:"40px",fontFamily:'monospace'}} class="nav-item" onClick={()=>{
           nav("/services")
@@ -61,3 +70,4 @@ const Navbar= () =>{
 }
 
 export default Navbar
+

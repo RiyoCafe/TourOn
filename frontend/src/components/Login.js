@@ -1,12 +1,13 @@
 import React, {useRef} from 'react'
 import Navbar from './Navbar'
-import {nav} from "../App";
+import {nav, setLoginName} from "../App";
 import '../CSSfolder/loginstyle.css'
 import {Form} from "react-bootstrap"
 import {Button} from "react-bootstrap";
 import './Assests/bootstrap.min.css';
 import '../CSSfolder/Hover.css'
 import axios from "axios";
+
 
 
 
@@ -25,7 +26,8 @@ const Login= () =>{
             password:password
         }).then(res=>{
             console.log(res.data)
-            nav('/contact')
+            //setLoginName(res.data.username)
+             nav('/afterlogin')
         }).catch(err=>{
             console.log(err)
         })
@@ -78,33 +80,7 @@ const Login= () =>{
                 </div>
 
             </Form>
-{/*    /!*        <div className="login">*!/*/}
-{/*    /!*    <form id="login" method="post" action="auth" style={{alignItems:"center"}}>*!/*/}
-{/*    /!*    <label><b>User Name*!/*/}
-{/*    /!*    </b>*!/*/}
-{/*    /!*    </label>*!/*/}
-{/*    /!*    <input type="text" name="Uname" className="Uname" placeholder="Username"/>*!/*/}
-{/*    /!*    <br></br>*!/*/}
-{/*    /!*    <label><b>Password*!/*/}
-{/*    /!*    </b>*!/*/}
-{/*    /!*    </label>*!/*/}
-{/*    /!*    <input type="Password" name="Pass" className="Pass" placeholder="Password"/>*!/*/}
-{/*    /!*    <br></br>*!/*/}
-{/*    /!*    <input type="button" name="log" className="log" value="Log In Here"/>*!/*/}
-{/*    /!*    <br></br>*!/*/}
-{/*    /!*    <br></br>*!/*/}
-{/*    /!*        <div style={{*!/*/}
-{/*    /!*            display:"flex",*!/*/}
-{/*    /!*            flexDirection:"row"*!/*/}
-{/*    /!*        }}>*!/*/}
-{/*    /!*            <input type="checkbox" className="check"/>*!/*/}
-{/*    /!*            <span className="remem">Remember me</span>*!/*/}
-{/*    */}
-{/*    /!*            <a href="#"> Forgot Password?</a>*!/*/}
-{/*    /!*        </div>*!/*/}
-{/*    */}
-{/*    /!*</form>*!/*/}
-{/*//</div>*/}
+
 
         </div>
     )
