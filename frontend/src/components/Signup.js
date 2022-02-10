@@ -1,7 +1,46 @@
 import React from 'react'
 import Navbar from './Navbar'
 import '../CSSfolder/signupstyle.css'
+import axios from "axios";
+import {nav, Setting, isLoggedIn,setLoginName} from "../App";
+
 const Signup= () =>{
+    const signupclick=()=>{
+        var username=document.getElementById("Username").value;
+        var email=document.getElementById("Email").value;
+        var password=document.getElementById("password").value;
+        var zipcode=document.getElementById("zipcode").value;
+        var street=document.getElementById("street").value;
+        var city=document.getElementById("city").value;
+        var country=document.getElementById("country").value;
+        var phn=document.getElementById("phonenumber").value;
+        axios.post('http://localhost:8080/register',{
+            username:username,
+            mail:email,
+            password:password,
+            street:street,
+            city:city,
+            country:country,
+            phoneNumber:phn
+
+        }).then(res=>{
+            console.log(res.data)
+            if(res.data.success) {
+
+                Setting(true,username);
+                nav('/home')
+            }
+            else
+            {
+                alert(username+" already exist");
+            }
+            //setLoginName(res.data.username)
+
+        }).catch(err=>{
+            console.log(err)
+        })
+
+    }
     return(
         <div>
             <Navbar/>
@@ -16,20 +55,20 @@ const Signup= () =>{
             </div>
             <div className="wrap2">
 
-                <input type="text" placeholder="Username"/>
+                <input type="text" placeholder="Username" id="Username"/>
                 <span className="focus-input2"></span>
 
             </div>
             <div className="wrap2">
 
-                <input type="text" placeholder="Email"/>
+                <input type="text" placeholder="Email" id="Email"/>
                 <span className="focus-input2"></span>
 
             </div>
 
             <div className="wrap2">
                 {/*<label>Password</label>*/}
-                <input type="password" placeholder="Password"/>
+                <input type="password" placeholder="Password" id="password"/>
                 <span className="focus-input2"></span>
 
             </div>
@@ -41,31 +80,31 @@ const Signup= () =>{
             </div>
             <div className="wrap2">
                 {/*<label>Phone Number</label>*/}
-                <input type="number" placeholder="phoneNumber"/>
+                <input type="number" placeholder="phoneNumber" id="phonenumber"/>
                 <span className="focus-input2"></span>
 
             </div>
             <div className="wrap2">
 
-                <input type="text" placeholder="zipcode"/>
+                <input type="text" placeholder="zipcode" id="zipcode"/>
                 <span className="focus-input2"></span>
 
             </div>
             <div className="wrap2">
 
-                <input type="text" placeholder="street"/>
+                <input type="text" placeholder="street" id="street"/>
                 <span className="focus-input2"></span>
 
             </div>
             <div className="wrap2">
 
-                <input type="text" placeholder="city"/>
+                <input type="text" placeholder="city" id="city"/>
                 <span className="focus-input2"></span>
 
             </div>
             <div className="wrap2">
 
-                <input type="text" placeholder="country_name"/>
+                <input type="text" placeholder="country_name" id="country"/>
                 <span className="focus-input2"></span>
 
             </div>
@@ -80,7 +119,7 @@ const Signup= () =>{
 
             </div>
 
-            <button className="btn">Register</button>
+            <button className="btn" onClick={signupclick}>Register</button>
 
         </div>
 

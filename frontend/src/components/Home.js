@@ -34,9 +34,11 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import {SearchOutlined} from "@mui/icons-material";
-import {nav} from "../App";
+import {nav, Setting} from "../App";
+import axios from "axios";
 
-
+var nearByHotels=[];
+var check_indate,check_outDate;
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
@@ -91,9 +93,34 @@ const Home= () =>{
 
         setDate2(newValue2);
     };
-    const buttonclick=()=>
+    const buttonclick=async ()=>
     {
-        nav('/afterSearchFromHome')
+        console.log("testing date");
+        console.log(date.getMonth());
+        check_indate=date.getDate()+"/"+date.getMonth()+1+"/"+date.getFullYear();
+        check_outDate=date2.getDate()+"/"+date2.getMonth()+1+"/"+date2.getFullYear();
+        var place =document.getElementById("address").value;
+        try{
+
+            var res=await  axios.post('http://localhost:8080/address',{
+                place:place
+            })
+            nearByHotels=[];
+            for (var r in res.data.hotels){
+                var row=res.data.hotels[r]; // row is the json object
+                nearByHotels.push(row);
+                console.log(row.hotel_name);
+            }
+            console.log(res.data.status==="success");
+            if(res.data.status==="success") {
+                console.log("inside if")
+                nav('/afterSearchFromHome')
+            }
+        }
+        catch(e){
+            console.log(e);
+        }
+
     }
 
     return(
@@ -102,26 +129,26 @@ const Home= () =>{
 
             <div style={{display:"flex",
                 flexDirection:"row"}} >
-                <Select
-                    style={{ width: "150px",marginLeft:"200px",background:"transparent",border:"black"}}
-                    value={selectedCountry}
-                    onChange={(e) => selectCountryHandler(e.target.value)}
-                >
-                    {!!countryArr?.length &&
-                        countryArr.map(({ label, value }) => (
-                            <MenuItem key={value} value={value}>
-                                {label}
-                            </MenuItem>
-                        ))}
-                </Select>
+                {/*<Select*/}
+                {/*    style={{ width: "150px",marginLeft:"200px",background:"transparent",border:"black"}}*/}
+                {/*    value={selectedCountry}*/}
+                {/*    onChange={(e) => selectCountryHandler(e.target.value)}*/}
+                {/*>*/}
+                {/*    {!!countryArr?.length &&*/}
+                {/*        countryArr.map(({ label, value }) => (*/}
+                {/*            <MenuItem key={value} value={value}>*/}
+                {/*                {label}*/}
+                {/*            </MenuItem>*/}
+                {/*        ))}*/}
+                {/*</Select>*/}
 
-
+                <input type="text" placeholder="Search for destination" id="address"/>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DesktopDatePicker
                         value={date}
                         onChange={handleFactoryDateChange}
                         label="Arrival date"
-                        inputFormat="MM/dd/yyyy"
+                        inputFormat="dd/MM/yyyy"
 
                         renderInput={(params) => <TextField {...params} />}
                     />
@@ -131,7 +158,7 @@ const Home= () =>{
                         value={date2}
                         onChange={handleFactoryDateChange2}
                         label="Checkout Date"
-                        inputFormat="MM/dd/yyyy"
+                        inputFormat="dd/MM/yyyy"
                         renderInput={(params) => <TextField {...params} />}
                     />
                 </LocalizationProvider>
@@ -180,7 +207,7 @@ const Home= () =>{
                         </Carousel.Caption>
                     </Carousel.Item>
                 </Carousel>
-                <h1 style={{height:"20%"}}>hjsdvkjwdsbcfdwd</h1>
+                <h1 style={{height:"20%"}}>Top rated</h1>
                 <Grid  container spacing={4} padding={4}>
                     <Grid item xs={12} md={4}>
                         <Card sx={{ Width:"100%" }} >
@@ -453,3 +480,4 @@ const Home= () =>{
 }
 
 export default Home
+export {nearByHotels,check_outDate,check_indate}

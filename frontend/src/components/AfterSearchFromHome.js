@@ -31,6 +31,12 @@ import image3 from "../images_cards/hotelcard-3.jpg"
 import image4 from "../images_cards/hotelcard-4.jpg"
 import image5 from "../images_cards/hotelcard-5.jpg"
 import {nav} from "../App";
+import {nearByHotels,check_indate,check_outDate} from "./Home";
+import axios from "axios";
+var hotelDeatils=[];
+var hotelServices=[];
+var hotelFacilities=[];
+var hotel_name;
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -80,6 +86,43 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
 }));
+const click =async(hotel_id,Hotel_name) => {
+    hotel_name=Hotel_name;
+    try{
+
+        var res=await  axios.post('http://localhost:8080/hotelDetail',{
+            hotel_id:hotel_id,
+            name:hotel_name,
+            check_indate:check_indate,
+            check_outDate:check_outDate
+        })
+        hotelDeatils=[];
+        hotelFacilities=[];
+        for (var r in res.data.rooms){
+            var row=res.data.rooms[r]; // row is the json object
+            hotelDeatils.push(row);
+            console.log(row.hotel_name);
+        }
+        hotelServices=[];
+        for (var r in res.data.service){
+            var row=res.data.service[r]; // row is the json object
+            if(row.cost)hotelServices.push(row);
+            else hotelFacilities.push(row);
+            console.log("hiiiiiiiiiii desc:"+row.description);
+        }
+        console.log(res.data.status==="success");
+        if(res.data.status==="success") {
+            console.log("inside if")
+            nav('/detailedViewHotel')
+        }
+    }
+    catch(e){
+        console.log(e);
+    }
+
+    //nav('/detailedViewHotel')
+
+}
 
 
 const AfterSearchFromHome=()=>
@@ -105,11 +148,6 @@ const AfterSearchFromHome=()=>
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
-    const click = () => {
-        nav('/home')
-
-    }
-
 
     return(
         <div>
@@ -145,20 +183,8 @@ const AfterSearchFromHome=()=>
                         <Button style={{color:"black",alignSelf:"center",fontFamily:'monospace',fontSize:"large"}}>Login</Button>
                         <Button style={{color:"black",alignSelf:"center",fontFamily:'monospace',fontSize:"large"}}>SignUp</Button>
                         <Button style={{color:"black",marginRight:"20%",fontFamily:'monospace',fontSize:"large"}}>Home</Button>
-                        {/*<PopupState variant="popover" popupId="demo-popup-menu">*/}
-                        {/*    {(popupState) => (*/}
-                        {/*        <React.Fragment>*/}
-                        {/*            <Button variant="contained" {...bindTrigger(popupState)}>*/}
-                        {/*                Dashboard*/}
-                        {/*            </Button>*/}
-                        {/*            <Menu {...bindMenu(popupState)}>*/}
-                        {/*                <MenuItem onClick={popupState.close}>Profile</MenuItem>*/}
-                        {/*                <MenuItem onClick={popupState.close}>My account</MenuItem>*/}
-                        {/*                <MenuItem onClick={popupState.close}>Logout</MenuItem>*/}
-                        {/*            </Menu>*/}
-                        {/*        </React.Fragment>*/}
-                        {/*    )}*/}
-                        {/*</PopupState>*/}
+
+
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title="Open settings" >
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -193,48 +219,14 @@ const AfterSearchFromHome=()=>
             </Box>
 
 
-            {/*<AppBar position="static">*/}
-            {/*    <Container maxWidth="xl">*/}
-            {/*        <Toolbar disableGutters>*/}
-            {/*            <Box sx={{ flexGrow: 0 }}>*/}
-            {/*                <Tooltip title="Open settings">*/}
-            {/*                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>*/}
-            {/*                        <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />*/}
-            {/*                    </IconButton>*/}
-            {/*                </Tooltip>*/}
-            {/*                <Menu*/}
-            {/*                    sx={{ mt: '45px' }}*/}
-            {/*                    id="menu-appbar"*/}
-            {/*                    anchorEl={anchorElUser}*/}
-            {/*                    anchorOrigin={{*/}
-            {/*                        vertical: 'top',*/}
-            {/*                        horizontal: 'right',*/}
-            {/*                    }}*/}
-            {/*                    keepMounted*/}
-            {/*                    transformOrigin={{*/}
-            {/*                        vertical: 'top',*/}
-            {/*                        horizontal: 'right',*/}
-            {/*                    }}*/}
-            {/*                    open={Boolean(anchorElUser)}*/}
-            {/*                    onClose={handleCloseUserMenu}*/}
-            {/*                >*/}
-            {/*                    {settings.map((setting) => (*/}
-            {/*                        <MenuItem key={setting} onClick={handleCloseUserMenu}>*/}
-            {/*                            <Typography textAlign="center">{setting}</Typography>*/}
-            {/*                        </MenuItem>*/}
-            {/*                    ))}*/}
-            {/*                </Menu>*/}
-            {/*            </Box>*/}
-            {/*        </Toolbar>*/}
-            {/*    </Container>*/}
-            {/*</AppBar>*/}
+
 
                 <Grid  container spacing={4} padding={4} >
-                    {data.cardData.map((item,index)=>
+                    {nearByHotels.map((item,index)=>
                     {
                         return(
                             <Grid item xs={12} md={4}>
-                                <Card sx={{ maxWidth: 345 }} className="a" onClick={click}>
+                                <Card sx={{ maxWidth: 345 }} className="a" onClick={()=>{click(item.hotel_id,item.hotel_name)}} /*onClick={this.click.bind(this,item.hotel_id)}*/>
                                     <CardMedia
                                         component="img"
                                         height="140"
@@ -243,15 +235,18 @@ const AfterSearchFromHome=()=>
                                     />
                                     <CardContent>
                                         <Typography gutterBottom variant="h5" component="div">
-                                            {item.title}
+                                            {item.hotel_name}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            {item.description}
+                                            {item.address}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {item.rating}
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
 
-                                        <Button size="small">Book now</Button>
+                                        {/*<Button size="small">Book now</Button>*/}
                                     </CardActions>
                                 </Card>
 
@@ -259,85 +254,6 @@ const AfterSearchFromHome=()=>
                         )
                     })}
 
-
-
-
-                {/*    <Grid item xs={12} md={4}>*/}
-                {/*        <Card sx={{ maxWidth: 345 }} className="a" onClick={click}>*/}
-                {/*            <CardMedia*/}
-                {/*                component="img"*/}
-                {/*                height="140"*/}
-                {/*                src={image1}*/}
-                {/*                alt="green iguana"*/}
-                {/*            />*/}
-                {/*            <CardContent>*/}
-                {/*                <Typography gutterBottom variant="h5" component="div">*/}
-                {/*                    Lizard*/}
-                {/*                </Typography>*/}
-                {/*                <Typography variant="body2" color="text.secondary">*/}
-                {/*                    Lizards are a widespread group of squamate reptiles, with over 6,000*/}
-                {/*                    species, ranging across all continents except Antarctica*/}
-                {/*                </Typography>*/}
-                {/*            </CardContent>*/}
-                {/*            <CardActions>*/}
-
-                {/*                <Button size="small">Book now</Button>*/}
-                {/*            </CardActions>*/}
-                {/*        </Card>*/}
-
-                {/*</Grid>*/}
-
-
-
-                {/*    <Grid item xs={12} md={4}>*/}
-                {/*        <Card sx={{ maxWidth: 345 }} className="a" onClick={click}>*/}
-                {/*            <CardMedia*/}
-                {/*                component="img"*/}
-                {/*                height="140"*/}
-                {/*                src={image1}*/}
-                {/*                alt="green iguana"*/}
-                {/*            />*/}
-                {/*            <CardContent>*/}
-                {/*                <Typography gutterBottom variant="h5" component="div">*/}
-                {/*                    XXXXX*/}
-                {/*                </Typography>*/}
-                {/*                <Typography variant="body2" color="text.secondary">*/}
-                {/*                    Lizards are a widespread group of squamate reptiles, with over 6,000*/}
-                {/*                    species, ranging across all continents except Antarctica*/}
-                {/*                </Typography>*/}
-                {/*            </CardContent>*/}
-                {/*            <CardActions>*/}
-
-                {/*                <Button size="small">Book now</Button>*/}
-                {/*            </CardActions>*/}
-                {/*        </Card>*/}
-                {/*    </Grid>*/}
-
-
-                {/*    <Grid className="a" item xs={12} md={4} >*/}
-                {/*        <Card sx={{ maxWidth: 345 }} className="a" onClick={click} >*/}
-                {/*            <CardMedia*/}
-                {/*                component="img"*/}
-                {/*                height="140"*/}
-                {/*                src={image1}*/}
-                {/*                alt="green iguana"*/}
-                {/*            />*/}
-                {/*            <CardContent>*/}
-                {/*                <Typography gutterBottom variant="h5" component="div">*/}
-                {/*                    PPPPPP*/}
-                {/*                </Typography>*/}
-                {/*                <Typography variant="body2" color="text.secondary">*/}
-                {/*                    Lizards are a widespread group of squamate reptiles, with over 6,000*/}
-                {/*                    species, ranging across all continents except Antarctica*/}
-                {/*                </Typography>*/}
-                {/*            </CardContent>*/}
-                {/*            <CardActions>*/}
-
-                {/*                <Button size="small">Book now</Button>*/}
-                {/*            </CardActions>*/}
-                {/*        </Card>*/}
-
-                {/*    </Grid>*/}
 
 
                 </Grid>
@@ -359,3 +275,4 @@ const AfterSearchFromHome=()=>
     )
 }
 export default AfterSearchFromHome;
+export {hotelDeatils,hotel_name,hotelServices,hotelFacilities}

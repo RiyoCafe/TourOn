@@ -1,9 +1,13 @@
 const Repository = require("./connection");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+var nodemailer=require("nodemailer");
+const axios = require("axios");
+const router = require("../app");
 const tokenExpiryDuration = 86400;
-
+var test=()=>{
+    success:true
+}
 class AuthRepository extends Repository {
     constructor() {
         super();
@@ -15,32 +19,67 @@ class AuthRepository extends Repository {
         const query1 = "select * from customer where mail = :0";
         const params1 = [data.mail];
         const result1 = await this.sqlQuery(query1, params1);
-        console.log(result1, "in sign in in auth repository");
-        if (result1.data.length > 0) {
+        console.log(result1, "in sign up in auth repository");
+        if (result1.data.length>0) {
+            console.log("here problem in authRepository");
             return {
                 success: false,
-                error: process.env.ERROR_EMAIL_EXISTS,
+                error: "Email already exist"
+                //process.env.ERROR_EMAIL_EXISTS,
             };
         }
 
-        const query =
-            "insert into customer (name,city,streetname,country,phonenumber,mail,password) values (:0,:1,:2,:3,:4,:5,:6,:7)";
-        const params = [
-            data.name,
-            data.city,
-            data.street_name,
-            data.country,
-            data.phone_number,
-            data.mail,
-            data.password,
-        ];
-        const result = await this.sqlQuery(query, params);
-        console.log(result, "in sign up in auth repository cls");
+        console.log(data);
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'TourOnproject@gmail.com',
+                pass: 'qsd123%a'
+            }
+        });
+        var identifier=514;
+        console.log("in mail sending "+identifier);
+        var mailOptions = {
+            from: 'TourOnproject@gmail.com',
+            to: data.mail,
+            subject: 'verification mail',
+            //html: '<p>Click <a href="http://localhost:8080/verification/'+identifier +'">here</a> to activate your account</p>'
+            text:"that not eassy"
+        };
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+         console.log("why not sending mail");
+
+        var res=await axios.get(`https://localhost:8080/verification/${identifier}`);
+        console.log("axios done");
+        console.log(res);
+        if(res.data.success){
+            console.log("succesfully emailed");
+            const query =
+                "insert into customer (name,city,streetname,country,phonenumber,mail,password) values (:0,:1,:2,:3,:4,:5,:6)";
+            const params = [
+                data.username,
+                data.city,
+                data.street,
+                data.country,
+                data.phoneNumber,
+                data.mail,
+                data.password,
+            ];
+            const result = await this.sqlQuery(query, params);
+            console.log(result, "in sign up in auth repository cls");
         return result;
+        }
     };
 
     login = async (data) => {
-        //console.log(data);
+        console.log(data);
         const query = "select * from customer where mail = :0 and password= :1";
         const params = [data.mail, data.password];
         const result = await this.sqlQuery(query, params);
@@ -49,7 +88,8 @@ class AuthRepository extends Repository {
         if (result.data.length == 0) {
             return {
                 success: false,
-                error: process.env.ERROR_EMAIL_AND_PASSWORD_DOES_NOT_MATCH,
+                error: "Email and password doesn't match "
+                //process.env.ERROR_EMAIL_AND_PASSWORD_DOES_NOT_MATCH,
             };
         }
         else

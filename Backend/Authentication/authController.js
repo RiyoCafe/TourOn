@@ -53,6 +53,11 @@ class AuthController {
     start = async (req, res) => {
         res.sendFile(path.join(__dirname + "/Login.html"));
     };
+    test = async (req, res) => {
+        res.send({
+            status:"success"
+        })
+    };
 }
 
 module.exports = AuthController;

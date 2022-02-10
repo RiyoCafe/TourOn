@@ -9,8 +9,8 @@ class Repository{
     sqlQuery=async function(query,params){
         if (this.connection === undefined) {
             this.connection = await oracledb.getConnection({
-                user: "c##riya_rabeya",
-                password: "1329",
+                user: "c##TourOn",
+                password: "touron",
                 connectionString: "localhost/orcl"
             });
             console.log("Successfully connected to Oracle Database");

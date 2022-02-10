@@ -1,37 +1,42 @@
 import React, {useRef} from 'react'
 import Navbar from './Navbar'
-import {nav, setLoginName} from "../App";
+import {nav, setLoginName,status2,Setting} from "../App";
 import '../CSSfolder/loginstyle.css'
 import {Form} from "react-bootstrap"
 import {Button} from "react-bootstrap";
 import './Assests/bootstrap.min.css';
 import '../CSSfolder/Hover.css'
 import axios from "axios";
+import {useAsync} from "react-async"
+import {loginclick1} from "./loginclick";
 
 
 
 
-const Login= () =>{
+
+const  Login= () =>{
 
     const emailRef=useRef()
     const passRef=useRef()
 
-
-    const loginClick=()=>{
+    const  loginClick=async  ()=>{
         const email=emailRef.current.value
         const password=passRef.current.value
+        try{
 
-        axios.post('http://localhost:8080/test',{
-            mail:email,
-            password:password
-        }).then(res=>{
-            console.log(res.data)
-            //setLoginName(res.data.username)
-             nav('/afterlogin')
-        }).catch(err=>{
-            console.log(err)
-        })
-
+            var res= await axios.post('http://localhost:8080/login',{
+                mail:email,
+                password:password
+            })
+            console.log(res);
+            if(res.data.status==="success") {
+                Setting(true,res.data.username);
+                nav('/home')
+            }
+        }
+        catch(e){
+            console.log(e);
+        }
 
     }
 
@@ -69,7 +74,7 @@ const Login= () =>{
                     <Form.Label style={{marginLeft:"15px"}} > Remember me</Form.Label>
                 </Form.Group>
                 <div style={{display:"flex",alignItems:"center"}}>
-                    <Button className={"a"} onClick={loginClick}  variant="primary" type="submit" style={{
+                    <Button  onClick={loginClick}  variant="primary"  style={{
                         marginLeft:"100px",
                         background:"#DFEBEE",
                         color:"black"
